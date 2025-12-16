@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IT Quiz Spinner | Random Name + Random Question</title>
+
+  <!-- Roboto + Roboto Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Roboto+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0B1220;
+      --panel: rgba(17, 24, 39, .72);
+      --panel2: rgba(17, 24, 39, .52);
+      --border: rgba(148, 163, 184, .18);
+      --text: #E5E7EB;
+      --muted: rgba(229,231,235,.72);
+      --muted2: rgba(229,231,235,.56);
+
+      --accent: #22D3EE;  /* cyan */
+      --accent2:#A78BFA;  /* violet */
+      --good: #34D399;
+      --bad: #FB7185;
+
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius: 16px;
+      --gap: 14px;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(1100px 500px at 10% -10%, rgba(34,211,238,.18), transparent 55%),
+        radial-gradient(900px 500px at 110% 10%, rgba(167,139,250,.16), transparent 55%),
+        radial-gradient(900px 700px at 50% 120%, rgba(52,211,153,.10), transparent 60%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .wrap{ max-width: 1260px; margin: 22px auto; padding: 0 16px 22px; }
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: var(--gap);
+      margin-bottom: 14px;
+    }
+    .brand{ display:flex; align-items:center; gap: 12px; }
+    .logo{
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(34,211,238,.22), rgba(167,139,250,.22));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .logo::before{
+      content:"";
+      position:absolute; inset:-30%;
+      background: conic-gradient(from 0deg, rgba(34,211,238,.0), rgba(34,211,238,.55), rgba(167,139,250,.0));
+      animation: spin 4.5s linear infinite;
+    }
+    .logo::after{
+      content:"</>";
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+      font-weight:700; color: rgba(229,231,235,.92);
+      text-shadow: 0 6px 20px rgba(0,0,0,.55);
+    }
+    @keyframes spin { to{ transform: rotate(360deg); } }
+
+    .titleBlock .h1{ font-size: 18px; font-weight: 800; letter-spacing: .2px; margin:0; }
+    .titleBlock .sub{
+      margin-top: 4px;
+      font-family: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .actions{ display:flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn{
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, .55);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: .2px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(34,211,238,.35); }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(34,211,238,.22), rgba(167,139,250,.20));
+      border-color: rgba(34,211,238,.35);
+    }
+    .btn.danger{
+      background: rgba(251,113,133,.14);
+      border-color: rgba(251,113,133,.30);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 1020px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(17,24,39,.74), rgba(17,24,39,.52));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .sectionTitle{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .sectionTitle h2{
+      margin:0;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: .2px;
+      display:flex; align-items:center; gap: 10px;
+    }
+    .tag{
+      font-family: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+      font-size: 11px;
+      color: rgba(34,211,238,.95);
+      border: 1px solid rgba(34,211,238,.25);
+      background: rgba(34,211,238,.08);
+      padding: 4px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    textarea{
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(2, 6, 23, .65);
+      color: var(--text);
+      padding: 12px 12px;
+      font-size: 14px;
+      outline:none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+    textarea::placeholder{ color: rgba(229,231,235,.45); }
+
+    .row{ display:flex; gap: 10px; flex-wrap: wrap; align-items:center; }
+
+    .pill{
+      display:inline-flex;
+      gap: 10px;
+      align-items:center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(2,6,23,.35);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .pill input{ accent-color: var(--accent); transform: scale(1.05); }
+
+    .hint{
+      margin-top: 8px;
+      color: var(--muted2);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .kpi{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .kpiBox{
+      border: 1px solid var(--border);
+      background: rgba(2,6,23,.28);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .kpiBox .v{ font-size: 18px; font-weight: 900; letter-spacing: .2px; }
+    .kpiBox .t{ margin-top: 3px; font-size: 12px; color: var(--muted2); }
+
+    .bigbox{
+      margin-top: 12px;
+      border: 1px dashed rgba(148,163,184,.26);
+      border-radius: 16px;
+      background: rgba(2,6,23,.24);
+      padding: 14px;
+    }
+
+    /* ===== Wheel ===== */
+    .wheelWrap{
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap: 16px;
+      align-items:center;
+    }
+    @media (max-width: 640px){
+      .wheelWrap{ grid-template-columns: 1fr; }
+    }
+    .wheelStage{
+      width: 380px;
+      height: 380px;
+      margin: 0 auto;
+      position: relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    canvas#wheel{
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.02);
+      border: 1px solid rgba(34,211,238,.25);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+    }
+    .pointer{
+      position:absolute;
+      top: 0px;
+      left: 50%;
+      transform: translateX(-50%);
+      width:0;height:0;
+      border-left: 14px solid transparent;
+      border-right:14px solid transparent;
+      border-top: 26px solid rgba(229,231,235,.95); /* down */
+      filter: drop-shadow(0 6px 6px rgba(0,0,0,.35));
+    }
+    .pointer::after{
+      content:"";
+      position:absolute;
+      left:-10px;
+      top:-24px;
+      width:20px;height:6px;
+      border-radius: 6px;
+      background: rgba(34,211,238,.55);
+      box-shadow: 0 0 18px rgba(34,211,238,.35);
+    }
+
+    .nameResult{ margin: 0; font-size: 28px; font-weight: 900; letter-spacing: .2px; }
+    .nameMeta{
+      margin-top: 6px;
+      font-family: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ===== Question ===== */
+    .qTitle{
+      margin: 0 0 10px;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: .2px;
+    }
+    .opt{
+      position: relative;
+      display:grid;
+      grid-template-columns: 22px 1fr;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(2,6,23,.32);
+      cursor: pointer;
+      user-select:none;
+      font-size: 14px;
+      transition: border-color .15s ease, transform .08s ease, background .15s ease;
+    }
+    .opt:hover{ border-color: rgba(34,211,238,.35); transform: translateY(-1px); }
+    .opt input{ margin-top: 4px; accent-color: var(--accent); }
+    .opt b{
+      font-family:'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+      font-weight: 700;
+      color: rgba(34,211,238,.95);
+    }
+
+    /* ===== Strong highlight when reveal ===== */
+    .opt.correct{
+      border-color: rgba(52,211,153,.75);
+      background: linear-gradient(135deg, rgba(52,211,153,.18), rgba(52,211,153,.08));
+      box-shadow: 0 0 0 2px rgba(52,211,153,.25), 0 12px 28px rgba(0,0,0,.35);
+      transform: translateY(-1px);
+    }
+    .opt.wrong{
+      border-color: rgba(251,113,133,.75);
+      background: linear-gradient(135deg, rgba(251,113,133,.18), rgba(251,113,133,.08));
+      box-shadow: 0 0 0 2px rgba(251,113,133,.25), 0 12px 28px rgba(0,0,0,.35);
+    }
+
+    /* Badge */
+    .badge{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-family: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(2,6,23,.35);
+      color: rgba(229,231,235,.9);
+    }
+    .opt.correct .badge{
+      border-color: rgba(52,211,153,.55);
+      background: rgba(52,211,153,.14);
+      color: rgba(52,211,153,.95);
+    }
+    .opt.wrong .badge{
+      border-color: rgba(251,113,133,.55);
+      background: rgba(251,113,133,.14);
+      color: rgba(251,113,133,.95);
+    }
+
+    .answerBox{
+      margin-top: 10px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(34,211,238,.25);
+      background: rgba(2,6,23,.30);
+      font-size: 14px;
+    }
+    .answerLine{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+    .answerKeyPill{
+      font-family: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+      font-weight: 900;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(52,211,153,.55);
+      background: rgba(52,211,153,.12);
+      color: rgba(52,211,153,.98);
+    }
+
+    /* ===== Projector: phóng to phần câu hỏi ===== */
+    body.projector .rightCard .qTitle{ font-size: 34px; line-height: 1.25; }
+    body.projector .rightCard .opt{ font-size: 24px; padding: 16px 16px; }
+    body.projector .rightCard .badge{ font-size: 13px; padding: 6px 10px; top: 14px; right: 14px; }
+    body.projector .rightCard .answerBox{ font-size: 20px; padding: 16px 16px; }
+    body.projector .rightCard .kpiBox .v{ font-size: 22px; }
+    body.projector .rightCard .btn{ font-size: 16px; padding: 12px 14px; }
+
+    .footer{
+      margin-top: 14px;
+      color: var(--muted2);
+      font-size: 12px;
+      font-family: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+      display:flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div class="titleBlock">
+          <p class="h1">IT Quiz Spinner (Vòng quay may mắn + Câu hỏi ngẫu nhiên)</p>
+          <div class="sub">Roboto UI + Roboto Mono | reveal: strong highlight correct vs wrong</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="btnFullscreen">Fullscreen</button>
+        <button class="btn" id="btnProjector">Projector Mode</button>
+        <button class="btn danger" id="btnHardReset">Reset tất cả</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="card leftCard">
+        <div class="sectionTitle">
+          <h2>1) Danh sách tên <span class="tag">INPUT</span></h2>
+          <span class="tag">random-name</span>
+        </div>
+
+        <textarea id="namesInput" placeholder="Nhập danh sách tên (mỗi dòng 1 tên)...
+Ví dụ:
+An
+Bình
+Chi
+Dũng"></textarea>
+
+        <div class="hint">Mỗi dòng là 1 học sinh. Hệ thống tự loại bỏ dòng trống và trùng tên.</div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn" id="btnLoadNames">Nạp danh sách</button>
+          <button class="btn" id="btnClearNames">Xoá danh sách</button>
+          <span class="pill">
+            <input type="checkbox" id="chkNoRepeatNames" checked>
+            <label for="chkNoRepeatNames">Không lặp tên (trong 1 vòng)</label>
+          </span>
+        </div>
+
+        <div class="kpi">
+          <div class="kpiBox">
+            <div class="v" id="kpiTotalNames">0</div>
+            <div class="t">Tổng số tên</div>
+          </div>
+          <div class="kpiBox">
+            <div class="v" id="kpiUsedNames">0</div>
+            <div class="t">Tên đã gọi</div>
+          </div>
+          <div class="kpiBox">
+            <div class="v" id="kpiRemainingNames">0</div>
+            <div class="t">Tên còn lại</div>
+          </div>
+        </div>
+
+        <div class="bigbox">
+          <div class="wheelWrap">
+            <div class="wheelStage">
+              <div class="pointer"></div>
+              <canvas id="wheel" width="360" height="360"></canvas>
+            </div>
+
+            <div>
+              <div class="tag" style="display:inline-flex; margin-bottom:8px;">LUCKY_SPIN()</div>
+              <p class="nameResult" id="nameSlot">—</p>
+              <div class="nameMeta" id="nameHint">Nhập danh sách tên để bắt đầu.</div>
+
+              <div class="row" style="margin-top:12px;">
+                <button class="btn primary" id="btnSpinName">Quay tên (5s)</button>
+                <button class="btn" id="btnResetRound">Reset vòng</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer">
+          <div>Workflow: Quay tên → Lấy câu hỏi → Hiện đáp án.</div>
+          <div>Highlight: <span style="color:rgba(52,211,153,.95)">GREEN=ĐÚNG</span> / <span style="color:rgba(251,113,133,.95)">RED=SAI</span></div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="card rightCard">
+        <div class="sectionTitle">
+          <h2>2) Câu hỏi <span class="tag">QUIZ</span></h2>
+          <span class="tag">random-question</span>
+        </div>
+
+        <div class="row">
+          <button class="btn primary" id="btnNextQuestion">Lấy câu hỏi random</button>
+          <button class="btn" id="btnReveal">Hiện đáp án</button>
+          <button class="btn" id="btnHide">Ẩn đáp án</button>
+
+          <span class="pill">
+            <input type="checkbox" id="chkNoRepeatQuestions" checked>
+            <label for="chkNoRepeatQuestions">Không lặp câu hỏi (trong 1 vòng)</label>
+          </span>
+        </div>
+
+        <div class="kpi">
+          <div class="kpiBox">
+            <div class="v" id="kpiTotalQ">45</div>
+            <div class="t">Tổng số câu</div>
+          </div>
+          <div class="kpiBox">
+            <div class="v" id="kpiUsedQ">0</div>
+            <div class="t">Câu đã ra</div>
+          </div>
+          <div class="kpiBox">
+            <div class="v" id="kpiRemainingQ">45</div>
+            <div class="t">Câu còn lại</div>
+          </div>
+        </div>
+
+        <div class="bigbox" style="margin-top:14px;">
+          <p class="qTitle" id="qText">Nhấn “Lấy câu hỏi random” để bắt đầu.</p>
+          <div id="options"></div>
+
+          <div class="answerBox" id="answerBox" style="display:none;">
+            <div class="answerLine">
+              <b>Đáp án đúng:</b>
+              <span class="answerKeyPill" id="answerKey">—</span>
+              <span class="hint" id="answerExplain" style="margin:0;">(ĐÚNG sẽ tô xanh, nếu chọn sai sẽ tô đỏ)</span>
+            </div>
+          </div>
+
+          <div class="hint" id="qHint"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // =========================
+  // QUESTIONS (45) - correct: 0=A,1=B,2=C,3=D
+  // =========================
+  const QUESTIONS = [
+    { id: 1, text: "Thành phần nào giúp hệ điều hành giao tiếp với thiết bị phần cứng?",
+      options: ["Ứng dụng văn phòng","Trình duyệt Web","Trình điều khiển thiết bị (driver)","Phần mềm giải trí"], correct: 2 },
+    { id: 2, text: "Nhiệm vụ quan trọng nhất của hệ điều hành là gì?",
+      options: ["Soạn thảo văn bản","Kết nối Internet","Điều phối và quản lý tài nguyên hệ thống","Chơi nhạc và video"], correct: 2 },
+    { id: 3, text: "Thiết bị nào dùng để lưu trữ dữ liệu khi tắt nguồn vẫn còn?",
+      options: ["RAM","Cache","Ổ SSD/HDD","CPU"], correct: 2 },
+    { id: 4, text: "Thiết bị nào sau đây vừa có chức năng nhập vừa có chức năng xuất?",
+      options: ["Chuột","Bàn phím","Màn hình cảm ứng","Máy in"], correct: 2 },
+    { id: 5, text: "Cổng nào thường dùng để kết nối máy tính với mạng có dây?",
+      options: ["VGA","Ethernet (RJ45)","Audio","USB-A"], correct: 1 },
+    { id: 6, text: "Hệ điều hành mã nguồn mở có đặc điểm nào sau đây?",
+      options: ["Không cho chỉnh sửa","Phải trả phí cao","Cho phép cộng đồng phát triển và sửa đổi mã nguồn","Chỉ dùng cho doanh nghiệp"], correct: 2 },
+    { id: 7, text: "Phát biểu nào đúng về Android?",
+      options: ["Chỉ chạy trên iPhone","Không cho cài ứng dụng bên ngoài","Là hệ điều hành di động phổ biến toàn cầu","Không hỗ trợ cập nhật"], correct: 2 },
+    { id: 8, text: "Trường hợp nào sau đây bắt buộc nên thay đổi mật khẩu?",
+      options: ["Khi đăng nhập thành công","Khi nghi ngờ tài khoản bị xâm nhập","Khi cài phần mềm mới","Khi tắt máy"], correct: 1 },
+    { id: 9, text: "Hệ điều hành máy tính để bàn không có chức năng nào sau đây?",
+      options: ["Quản lý bộ nhớ","Quản lý tiến trình","Điều khiển phần cứng","Soạn thảo văn bản chuyên nghiệp"], correct: 3 },
+    { id:10, text: "Thiết bị nào sau đây không phải là thiết bị nhập?",
+      options: ["Webcam","Micro","Bàn phím","Máy chiếu"], correct: 3 },
+    { id:11, text: "USB-C có ưu điểm nào nổi bật?",
+      options: ["Chỉ dùng để sạc","Chỉ cắm một chiều","Hỗ trợ truyền dữ liệu, hình ảnh và sạc nhanh","Không thay thế cổng khác"], correct: 2 },
+    { id:12, text: "Trình duyệt Web dùng để làm gì?",
+      options: ["Tạo trang Web","Truy cập và hiển thị nội dung Web","Lưu trữ dữ liệu hệ thống","Quét virus"], correct: 1 },
+    { id:13, text: "Khi máy tính không có chuột, thiết bị nào có thể thay thế để nhập dữ liệu?",
+      options: ["Bàn phím","Touchpad","Micro","Cả A, B, C"], correct: 3 },
+    { id:14, text: "Thiết bị nào giúp xuất dữ liệu dưới dạng bản in?",
+      options: ["Màn hình","Máy in","Webcam","Chuột"], correct: 1 },
+    { id:15, text: "Mật khẩu nào sau đây được xem là an toàn nhất?",
+      options: ["123456","NguyenVanA","abcdef","T!nH0c@2025"], correct: 3 },
+    { id:16, text: "Toán tử nào giúp tìm chính xác một cụm từ?",
+      options: ["AND","OR","Dấu ngoặc kép \" \"","~"], correct: 2 },
+    { id:17, text: "Phát biểu nào đúng về bản quyền?",
+      options: ["Chỉ áp dụng cho sách","Chỉ tồn tại khi đăng ký","Phát sinh ngay khi tác phẩm được tạo ra","Không áp dụng trên Internet"], correct: 2 },
+    { id:18, text: "Cách nào giúp thu hẹp kết quả tìm kiếm hiệu quả?",
+      options: ["Dùng nhiều từ chung","Không dùng từ khóa","Sử dụng từ khóa cụ thể và chính xác","Gõ cả đoạn văn dài"], correct: 2 },
+    { id:19, text: "Thông tin nào nên có khi trích dẫn nguồn Web?",
+      options: ["Số lượt thích","Ngày truy cập và địa chỉ URL","Bình luận người dùng","Quảng cáo"], correct: 1 },
+    { id:20, text: "Tác phẩm thuộc Public Domain là:",
+      options: ["Phim mới phát hành","Sách còn bản quyền","Tác phẩm có bản quyền vĩnh viễn","Tác phẩm hết hạn bảo hộ bản quyền"], correct: 3 },
+    { id:21, text: "Giấy phép CC-BY yêu cầu điều kiện nào?",
+      options: ["Không cho chỉnh sửa","Phải trả phí","Ghi công tác giả khi sử dụng","Chỉ dùng cá nhân"], correct: 2 },
+    { id:22, text: "Nguồn thông tin nào sau đây đáng tin cậy nhất cho học tập?",
+      options: ["Diễn đàn ẩn danh","Website trường đại học hoặc tổ chức giáo dục","Trang quảng cáo","Bình luận mạng xã hội"], correct: 1 },
+    { id:23, text: "Creative Commons giúp người dùng:",
+      options: ["Cấm chia sẻ tác phẩm","Tự do sử dụng không cần điều kiện","Xác định rõ quyền và nghĩa vụ khi sử dụng tác phẩm","Mua bán bản quyền"], correct: 2 },
+    { id:24, text: "Phát biểu nào sai về Creative Commons?",
+      options: ["Có nhiều loại giấy phép","Yêu cầu tuân thủ điều kiện","Luôn cho phép sử dụng thương mại","Áp dụng cho tác phẩm sáng tạo"], correct: 2 },
+    { id:25, text: "Khi sử dụng hình ảnh CC, người dùng cần:",
+      options: ["Ghi nguồn tác giả nếu giấy phép yêu cầu","Không cần kiểm tra giấy phép","Luôn xin phép trực tiếp","Trả tiền cho tác giả"], correct: 0 },
+    { id:26, text: "Dấu hiệu nào cho thấy một trang Web kém tin cậy?",
+      options: ["Có tác giả rõ ràng","Có trích dẫn nguồn","Nội dung nhiều lỗi chính tả, giật gân","Được cập nhật thường xuyên"], correct: 2 },
+    { id:27, text: "Cách kiểm tra độ tin cậy của thông tin trực tuyến là:",
+      options: ["So sánh nhiều nguồn","Kiểm tra tác giả","Kiểm tra thời gian cập nhật","Tất cả các ý trên"], correct: 3 },
+    { id:28, text: "Phím tắt Ctrl + F dùng để:",
+      options: ["Dịch văn bản","Tìm từ trong trang Web đang mở","Lưu trang Web","Chia sẻ nội dung"], correct: 1 },
+    { id:29, text: "Nội dung nào không vi phạm bản quyền?",
+      options: ["Sao chép bài viết không ghi nguồn","Sử dụng hình ảnh Public Domain","Chia sẻ phim lậu","Tải nhạc có bản quyền trái phép"], correct: 1 },
+    { id:30, text: "Public Domain có nghĩa là:",
+      options: ["Thuộc sở hữu cá nhân","Không được sử dụng","Thuộc về cộng đồng, có thể sử dụng tự do","Phải xin phép tác giả"], correct: 2 },
+    { id:31, text: "Phần mềm nào thuộc nhóm phần mềm ứng dụng?",
+      options: ["Windows","Linux","Microsoft Word","Driver"], correct: 2 },
+    { id:32, text: "Thiết bị nào xử lý dữ liệu trung tâm của máy tính?",
+      options: ["RAM","CPU","Ổ cứng","Card mạng"], correct: 1 },
+    { id:33, text: "RAM có đặc điểm nào?",
+      options: ["Lưu trữ lâu dài","Không mất dữ liệu khi tắt máy","Lưu trữ tạm thời khi máy hoạt động","Chỉ dùng cho hệ điều hành"], correct: 2 },
+    { id:34, text: "Thiết bị nào dùng để xuất âm thanh?",
+      options: ["Micro","Webcam","Loa","Bàn phím"], correct: 2 },
+    { id:35, text: "Khi tìm kiếm thông tin học tập, nên ưu tiên:",
+      options: ["Trang bán hàng","Video không nguồn","Website giáo dục, khoa học","Tin đồn"], correct: 2 },
+    { id:36, text: "Việc đặt mật khẩu giống nhau cho nhiều tài khoản sẽ:",
+      options: ["An toàn hơn","Dễ nhớ hơn nhưng kém an toàn","Không ảnh hưởng","Tăng bảo mật"], correct: 1 },
+    { id:37, text: "Hệ điều hành nào phổ biến trên máy tính cá nhân?",
+      options: ["Android","iOS","Windows","HarmonyOS"], correct: 2 },
+    { id:38, text: "Phần mềm chống virus thuộc loại nào?",
+      options: ["Phần mềm hệ thống","Phần mềm tiện ích","Phần mềm ứng dụng văn phòng","Phần cứng"], correct: 1 },
+    { id:39, text: "Khi sử dụng tài liệu trực tuyến cho bài học, giáo viên nên:",
+      options: ["Sao chép nguyên văn","Không cần ghi nguồn","Trích dẫn rõ ràng nguồn tài liệu","Chỉ dùng tài liệu mạng xã hội"], correct: 2 },
+    { id:40, text: "Toán tử AND trong tìm kiếm có tác dụng gì?",
+      options: ["Loại bỏ từ khóa","Mở rộng kết quả","Yêu cầu xuất hiện đồng thời các từ khóa","Tìm từ đồng nghĩa"], correct: 2 },
+    { id:41, text: "Phát biểu đúng về an toàn thông tin cá nhân là:",
+      options: ["Chia sẻ mật khẩu cho bạn bè","Dùng cùng mật khẩu cho mọi tài khoản","Không công khai thông tin nhạy cảm","Ghi mật khẩu ra giấy"], correct: 2 },
+    { id:42, text: "Trang Web học thuật thường có đặc điểm:",
+      options: ["Nội dung cảm tính","Có dẫn nguồn rõ ràng","Nhiều quảng cáo","Không có tác giả"], correct: 1 },
+    { id:43, text: "Giấy phép CC nào hạn chế sử dụng thương mại?",
+      options: ["CC-BY","CC-BY-SA","CC-BY-NC","CC0"], correct: 2 },
+    { id:44, text: "Khi sử dụng nội dung trên Internet, điều quan trọng nhất là:",
+      options: ["Nhanh chóng","Đẹp mắt","Tôn trọng bản quyền và đạo đức số","Sao chép dễ dàng"], correct: 2 },
+    { id:45, text: "Kỹ năng quan trọng khi học tập trực tuyến là:",
+      options: ["Chỉ đọc tiêu đề","Tin mọi thông tin","Đánh giá và chọn lọc nguồn thông tin","Chỉ xem mạng xã hội"], correct: 2 },
+  ];
+
+  // ========= Helpers =========
+  const $ = (id) => document.getElementById(id);
+  const ALPH = ["A","B","C","D"];
+  const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+  const randInt = (m)=>Math.floor(Math.random()*m);
+  const pickRandomFrom = (arr)=>arr[randInt(arr.length)];
+  const easeOutCubic = (t)=>1 - Math.pow(1 - t, 3);
+
+  function normalizeNames(raw){
+    const lines = raw.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    const seen = new Set();
+    const uniq = [];
+    for (const n of lines){
+      const k = n.toLowerCase();
+      if (!seen.has(k)){ seen.add(k); uniq.push(n); }
+    }
+    return uniq;
+  }
+
+  // ========= State =========
+  let namesAll = [];
+  let namesPool = [];
+  let usedNames = [];
+
+  const qAll = QUESTIONS.slice();
+  let qPool = QUESTIONS.slice();
+  let usedQ = [];
+
+  let currentName = null;
+  let currentQ = null;
+
+  // ========= Wheel =========
+  const canvas = $("wheel");
+  const ctx = canvas.getContext("2d");
+
+  let wheelAngle = 0;
+  let spinning = false;
+  let spinReq = null;
+
+  function getActiveNameList(){
+    return $("chkNoRepeatNames").checked ? namesPool : namesAll;
+  }
+
+  function drawWheel(){
+    const list = getActiveNameList();
+    const w = canvas.width, h = canvas.height;
+    const cx = w/2, cy = h/2;
+    const radius = Math.min(cx, cy) - 10;
+
+    ctx.clearRect(0,0,w,h);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(wheelAngle);
+
+    if (!list.length){
+      ctx.beginPath();
+      ctx.arc(0,0,radius,0,Math.PI*2);
+      ctx.fillStyle = "rgba(255,255,255,.03)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(148,163,184,.25)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(229,231,235,.75)";
+      ctx.font = "700 16px Roboto";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("NO_NAMES", 0, 0);
+      ctx.restore();
+      return;
+    }
+
+    const n = list.length;
+    const step = (Math.PI*2)/n;
+
+    for (let i=0;i<n;i++){
+      const start = i*step;
+      const end = (i+1)*step;
+
+      const hue = (i * 360 / n);
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.arc(0,0,radius,start,end);
+      ctx.closePath();
+      ctx.fillStyle = `hsla(${hue}, 85%, 55%, .22)`;
+      ctx.fill();
+      ctx.strokeStyle = "rgba(148,163,184,.18)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.save();
+      const mid = start + step/2;
+      ctx.rotate(mid);
+      ctx.fillStyle = "rgba(229,231,235,.92)";
+      ctx.font = "700 12px Roboto";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      const label = (list[i].length > 18) ? (list[i].slice(0,18) + "…") : list[i];
+      ctx.fillText(label, radius - 12, 0);
+      ctx.restore();
+    }
+
+    ctx.beginPath();
+    ctx.arc(0,0,radius,0,Math.PI*2);
+    ctx.strokeStyle = "rgba(34,211,238,.45)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(0,0,30,0,Math.PI*2);
+    ctx.fillStyle = "rgba(2,6,23,.95)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(34,211,238,.35)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(229,231,235,.95)";
+    ctx.font = "800 12px Roboto Mono";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("SPIN()", 0, 0);
+
+    ctx.restore();
+  }
+
+  function getSelectedIndex(){
+    const list = getActiveNameList();
+    const n = list.length;
+    if (!n) return -1;
+
+    const step = (Math.PI*2)/n;
+
+    let a = (-Math.PI/2 - wheelAngle) % (Math.PI*2);
+    if (a < 0) a += Math.PI*2;
+
+    const idx = Math.floor(a / step);
+    return clamp(idx, 0, n-1);
+  }
+
+  function spinWheelAuto5s(){
+    if (spinning) return;
+
+    if (!namesAll.length){
+      $("nameHint").textContent = "Chưa có danh sách tên. Nhập tên rồi bấm “Nạp danh sách”.";
+      return;
+    }
+    if ($("chkNoRepeatNames").checked && namesPool.length === 0){
+      $("nameHint").textContent = "Đã hết tên trong vòng này. Bấm “Reset vòng” để chạy lại.";
+      return;
+    }
+
+    spinning = true;
+    $("btnSpinName").disabled = true;
+    $("nameSlot").textContent = "—";
+    $("nameHint").textContent = "Đang quay... (auto stop 5s)";
+
+    const duration = 5000;
+    const start = performance.now();
+
+    const extraTurns = 7 + randInt(6);
+    const randomOffset = Math.random() * Math.PI * 2;
+    const startAngle = wheelAngle;
+    const targetAngle = startAngle + extraTurns * Math.PI * 2 + randomOffset;
+
+    function anim(now){
+      const t = clamp((now - start)/duration, 0, 1);
+      const e = easeOutCubic(t);
+      wheelAngle = startAngle + (targetAngle - startAngle) * e;
+      drawWheel();
+
+      if (t < 1){
+        spinReq = requestAnimationFrame(anim);
+      } else {
+        spinning = false;
+        $("btnSpinName").disabled = false;
+
+        const idx = getSelectedIndex();
+        const list = getActiveNameList();
+        const chosen = idx >= 0 ? list[idx] : null;
+        currentName = chosen;
+
+        if (currentName){
+          $("nameSlot").textContent = currentName;
+
+          if ($("chkNoRepeatNames").checked){
+            const rmIdx = namesPool.findIndex(n => n.toLowerCase() === currentName.toLowerCase());
+            if (rmIdx >= 0){
+              const [rm] = namesPool.splice(rmIdx, 1);
+              usedNames.push(rm);
+            }
+          }
+
+          $("nameHint").textContent = `Tên may mắn: ${currentName}. Tiếp theo: bấm “Lấy câu hỏi random”.`;
+          updateKPIs();
+          drawWheel();
+        } else {
+          $("nameHint").textContent = "Không chốt được tên (danh sách rỗng).";
+        }
+      }
+    }
+    spinReq = requestAnimationFrame(anim);
+  }
+
+  // ========= KPIs / Reset =========
+  function updateKPIs(){
+    $("kpiTotalNames").textContent = String(namesAll.length);
+    $("kpiUsedNames").textContent = String(usedNames.length);
+    $("kpiRemainingNames").textContent = String(namesPool.length);
+
+    $("kpiUsedQ").textContent = String(usedQ.length);
+    $("kpiRemainingQ").textContent = String(qPool.length);
+  }
+
+  function resetNameRound(){
+    usedNames = [];
+    namesPool = namesAll.slice();
+    currentName = null;
+    $("nameSlot").textContent = "—";
+    $("nameHint").textContent = namesAll.length ? "Sẵn sàng quay vòng tròn may mắn." : "Chưa có danh sách tên.";
+    updateKPIs();
+    drawWheel();
+  }
+
+  function hardResetAll(){
+    if (spinReq) cancelAnimationFrame(spinReq);
+    spinning = false;
+    $("btnSpinName").disabled = false;
+
+    namesAll = [];
+    namesPool = [];
+    usedNames = [];
+    currentName = null;
+
+    qPool = qAll.slice();
+    usedQ = [];
+    currentQ = null;
+
+    $("namesInput").value = "";
+    $("nameSlot").textContent = "—";
+    $("nameHint").textContent = "Nhập danh sách tên để bắt đầu.";
+    renderQuestion(null);
+    $("qHint").textContent = "";
+
+    updateKPIs();
+    drawWheel();
+  }
+
+  // ========= Question rendering (with strong reveal) =========
+  function clearRevealBadges(){
+    document.querySelectorAll(".badge").forEach(b => b.remove());
+  }
+
+  function renderQuestion(q){
+    const optWrap = $("options");
+    optWrap.innerHTML = "";
+    $("answerBox").style.display = "none";
+    $("answerKey").textContent = "—";
+    clearRevealBadges();
+
+    if (!q){
+      $("qText").textContent = "Nhấn “Lấy câu hỏi random” để bắt đầu.";
+      return;
+    }
+
+    $("qText").textContent = `Câu ${q.id}. ${q.text}`;
+
+    q.options.forEach((text, idx) => {
+      const div = document.createElement("label");
+      div.className = "opt";
+      div.dataset.idx = String(idx);
+      div.innerHTML = `
+        <input type="radio" name="opt" value="${idx}">
+        <div><b>${ALPH[idx]}.</b> ${text}</div>
+      `;
+      div.addEventListener("click", () => {
+        div.querySelector("input").checked = true;
+        // Khi chọn lại đáp án, xoá highlight nếu đang hiện
+        document.querySelectorAll(".opt").forEach(x => x.classList.remove("correct","wrong"));
+        clearRevealBadges();
+        $("answerBox").style.display = "none";
+      });
+      optWrap.appendChild(div);
+    });
+  }
+
+  function nextQuestion(){
+    if ($("chkNoRepeatQuestions").checked && qPool.length === 0){
+      $("qHint").textContent = "Đã hết câu hỏi trong vòng này. Reset tất cả để chạy vòng mới.";
+      return;
+    }
+
+    const source = $("chkNoRepeatQuestions").checked ? qPool : qAll;
+    const q = pickRandomFrom(source);
+
+    currentQ = q;
+    renderQuestion(q);
+
+    if ($("chkNoRepeatQuestions").checked){
+      const idx = qPool.findIndex(x => x.id === q.id);
+      if (idx >= 0){
+        const [rm] = qPool.splice(idx, 1);
+        usedQ.push(rm);
+      }
+    }
+
+    const namePart = currentName ? `Dành cho: ${currentName}. ` : "";
+    $("qHint").textContent = namePart + "Cho học sinh chọn đáp án, sau đó bấm “Hiện đáp án”.";
+    updateKPIs();
+  }
+
+  function showAnswer(){
+    if (!currentQ) return;
+
+    const correctIdx = currentQ.correct;
+
+    // hiện box đáp án đúng
+    $("answerKey").textContent = `${ALPH[correctIdx]}`;
+    $("answerBox").style.display = "block";
+
+    // clear trạng thái cũ
+    document.querySelectorAll(".opt").forEach(x => x.classList.remove("correct","wrong"));
+    clearRevealBadges();
+
+    const selected = document.querySelector('input[name="opt"]:checked');
+    const chosenIdx = selected ? parseInt(selected.value, 10) : null;
+
+    const opts = Array.from(document.querySelectorAll(".opt"));
+
+    // highlight đúng
+    const correctOpt = opts[correctIdx];
+    correctOpt.classList.add("correct");
+    const badgeOk = document.createElement("span");
+    badgeOk.className = "badge";
+    badgeOk.textContent = "ĐÚNG";
+    correctOpt.appendChild(badgeOk);
+
+    // nếu học sinh chọn sai -> tô đỏ đáp án đã chọn
+    if (chosenIdx !== null && chosenIdx !== correctIdx){
+      const wrongOpt = opts[chosenIdx];
+      wrongOpt.classList.add("wrong");
+      const badgeBad = document.createElement("span");
+      badgeBad.className = "badge";
+      badgeBad.textContent = "SAI";
+      wrongOpt.appendChild(badgeBad);
+    }
+
+    // nếu học sinh chưa chọn -> nhắc chọn
+    if (chosenIdx === null){
+      $("qHint").textContent = "Chưa chọn đáp án. Bạn có thể cho học sinh chọn, sau đó bấm “Hiện đáp án” lại.";
+    }
+  }
+
+  function hideAnswer(){
+    $("answerBox").style.display = "none";
+    document.querySelectorAll(".opt").forEach(x => x.classList.remove("correct","wrong"));
+    clearRevealBadges();
+  }
+
+  // ========= Global UI =========
+  $("btnProjector").addEventListener("click", () => {
+    document.body.classList.toggle("projector");
+    $("btnProjector").textContent = document.body.classList.contains("projector")
+      ? "Projector Mode: ON"
+      : "Projector Mode";
+  });
+
+  $("btnFullscreen").addEventListener("click", async () => {
+    try{
+      if (!document.fullscreenElement){
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch(e){}
+  });
+
+  // ========= Events =========
+  $("btnLoadNames").addEventListener("click", () => {
+    namesAll = normalizeNames($("namesInput").value);
+    resetNameRound();
+    $("nameHint").textContent = namesAll.length ? "Đã nạp danh sách. Bấm “Quay tên (5s)”." : "Danh sách trống.";
+  });
+
+  $("btnClearNames").addEventListener("click", () => {
+    namesAll = [];
+    namesPool = [];
+    usedNames = [];
+    currentName = null;
+    $("namesInput").value = "";
+    $("nameSlot").textContent = "—";
+    $("nameHint").textContent = "Đã xoá danh sách tên.";
+    updateKPIs();
+    drawWheel();
+  });
+
+  $("chkNoRepeatNames").addEventListener("change", () => drawWheel());
+
+  $("btnSpinName").addEventListener("click", () => spinWheelAuto5s());
+  $("btnResetRound").addEventListener("click", () => resetNameRound());
+  $("btnHardReset").addEventListener("click", () => hardResetAll());
+
+  $("btnNextQuestion").addEventListener("click", () => nextQuestion());
+  $("btnReveal").addEventListener("click", () => showAnswer());
+  $("btnHide").addEventListener("click", () => hideAnswer());
+
+  // ========= Init =========
+  $("kpiTotalQ").textContent = String(qAll.length);
+  $("kpiRemainingQ").textContent = String(qAll.length);
+  updateKPIs();
+  drawWheel();
+</script>
+</body>
+</html>
